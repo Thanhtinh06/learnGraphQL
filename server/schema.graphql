@@ -1,0 +1,30 @@
+type Query {
+  jobs: [Job!]
+  users: [User!]
+}
+
+"""
+Represent for job post
+"""
+type Job {
+  id: ID!
+  title: String
+  """
+  The __date__ when job published, in ISO-8601 format E.g 2023-08-17.
+  """
+  date: String
+  description: String
+  company: Company!
+}
+
+type User {
+  id: ID!
+  email: String
+  password: String
+}
+
+type Company {
+  id: ID!
+  name: String!
+  description: String
+}
