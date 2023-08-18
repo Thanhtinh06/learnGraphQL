@@ -1,8 +1,8 @@
 type Query {
   jobs: [Job!]
   users: [User!]
-  job(id: ID!): Job
-  company(id: ID!): Company
+  job(id: ID!): Job!
+  company(id: ID!): Company!
 }
 
 """
@@ -29,4 +29,5 @@ type Company {
   id: ID!
   name: String!
   description: String
+  jobs: [Job!]
 }

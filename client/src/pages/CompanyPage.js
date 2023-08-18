@@ -1,22 +1,47 @@
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { getCompany } from "../lib/graphql/queries";
+import JobList from "../components/JobList";
 
 function CompanyPage() {
   const { companyId } = useParams();
-  const [company, setCompany] = useState();
+  const [company, setCompany] = useState({
+    company: null,
+    loading: true,
+    error: false,
+  });
 
   useEffect(() => {
-    getCompany(companyId).then((value) => setCompany(value));
+    (async () => {
+      try {
+        const company = await getCompany(companyId);
+        setCompany({
+          company,
+          loading: false,
+          error: false,
+        });
+      } catch (error) {
+        setCompany({
+          company: null,
+          loading: false,
+          error: true,
+        });
+      }
+    })();
   }, [companyId]);
 
-  if (!company) {
+  if (company.loading) {
     return <p>Loading</p>;
+  }
+  if (company.error) {
+    return <p>Not Found Company</p>;
   }
   return (
     <div>
-      <h1 className="title">{company.name}</h1>
-      <div className="box">{company.description}</div>
+      <h1 className="title">{company?.name}</h1>
+      <div className="box">{company?.description}</div>
+      <h2>Jobs at {company?.name}</h2>
+      <JobList jobs={company?.jobs} />
     </div>
   );
 }
