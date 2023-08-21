@@ -13,15 +13,29 @@ function JobPage() {
     });
   }, [jobId]);
   const handleRemoveJob = async (id) => {
-    const result = await deleteJob({ id });
-    if (result) {
-      navigate("/");
-    }
+    deleteJob({ id })
+      .then(() => navigate("/"))
+      .catch(({ response }) => alert(response.errors[0].message));
   };
 
   if (!job) {
     return <p>Loading....</p>;
   }
+
+  const renderActionJob = () => {
+    return (
+      <div>
+        <button
+          onClick={() => {
+            navigate(`/jobs/update/${jobId}`);
+          }}
+        >
+          Edit{" "}
+        </button>
+        <button onClick={() => handleRemoveJob(jobId)}>Remove</button>
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -33,16 +47,7 @@ function JobPage() {
         <div className="block has-text-grey">Posted: {job?.date}</div>
         <p className="block">{job?.description}</p>
       </div>
-      <div>
-        <button
-          onClick={() => {
-            navigate(`/jobs/update/${jobId}`);
-          }}
-        >
-          Edit{" "}
-        </button>
-        <button onClick={() => handleRemoveJob(jobId)}>Remove</button>
-      </div>
+      {renderActionJob()}
     </div>
   );
 }

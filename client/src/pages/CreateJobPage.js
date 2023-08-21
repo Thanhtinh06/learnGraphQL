@@ -10,15 +10,18 @@ function CreateJobPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!jobId) {
-      const job = await createJob({ title, description });
-      if (job) {
-        navigate("/");
-      }
+      await createJob({ title, description })
+        .then(() => navigate("/"))
+        .catch(({ response }) => alert(response.errors[0].message));
     } else {
-      const job = await updateJob({ id: jobId, title, description });
-      if (job) {
-        alert("Update Successfull");
-      }
+      await updateJob({ id: jobId, title, description })
+        .then((value) => {
+          const message = value
+            ? "Update Successfull"
+            : "Can't update another job's company";
+          alert(message);
+        })
+        .catch(({ response }) => alert(response.errors[0].message));
     }
   };
   useEffect(() => {

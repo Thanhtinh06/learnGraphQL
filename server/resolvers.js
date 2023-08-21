@@ -24,15 +24,28 @@ export const resolvers = {
     },
   },
   Mutation: {
-    createJob: (__root, { input: { title, description } }) => {
-      const companyId = "FjcJCHJALA4i";
-      return createJob({ companyId, title, description });
+    // arg3 : context
+    createJob: (__root, { input: { title, description } }, { user }) => {
+      if (!user) {
+        throw unauthorizationError("Missing authentication");
+      }
+      return createJob({ companyId: user.companyId, title, description });
     },
-    deleteJob: (__root, { input: { id } }) => {
-      return deleteJob(id);
+    deleteJob: async (__root, { input: { id } }, { user }) => {
+      if (!user) {
+        throw unauthorizationError("Missing authentication");
+      }
+      const job = await deleteJob(id, user.companyId);
+      if (!job) {
+        throw notFoundMessage("Can't remove another job's company");
+      }
+      return job;
     },
-    updateJob: (__root, { input: { id, title, description } }) => {
-      return updateJob({ id, title, description });
+    updateJob: (__root, { input: { id, title, description } }, { user }) => {
+      if (!user) {
+        throw unauthorizationError("Missing authentication");
+      }
+      return updateJob({ id, title, description, companyId: user.companyId });
     },
   },
   Job: {
@@ -58,5 +71,10 @@ function toIosDate(value) {
 function notFoundMessage(message) {
   return new GraphQLError(message, {
     extensions: { code: 400 },
+  });
+}
+function unauthorizationError(message) {
+  return new GraphQLError(message, {
+    extensions: { code: 401 },
   });
 }
