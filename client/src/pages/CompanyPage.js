@@ -5,7 +5,7 @@ import JobList from "../components/JobList";
 
 function CompanyPage() {
   const { companyId } = useParams();
-  const [company, setCompany] = useState({
+  const [state, setState] = useState({
     company: null,
     loading: true,
     error: false,
@@ -15,13 +15,13 @@ function CompanyPage() {
     (async () => {
       try {
         const company = await getCompany(companyId);
-        setCompany({
+        setState({
           company,
           loading: false,
           error: false,
         });
       } catch (error) {
-        setCompany({
+        setState({
           company: null,
           loading: false,
           error: true,
@@ -30,18 +30,18 @@ function CompanyPage() {
     })();
   }, [companyId]);
 
-  if (company.loading) {
+  if (state.loading) {
     return <p>Loading</p>;
   }
-  if (company.error) {
+  if (state.error) {
     return <p>Not Found Company</p>;
   }
   return (
     <div>
-      <h1 className="title">{company?.name}</h1>
-      <div className="box">{company?.description}</div>
-      <h2>Jobs at {company?.name}</h2>
-      <JobList jobs={company?.jobs} />
+      <h1 className="title">{state.company.name}</h1>
+      <div className="box">{state.company.description}</div>
+      <h2>Jobs at {state.company.name}</h2>
+      <JobList jobs={state.company.jobs} />
     </div>
   );
 }

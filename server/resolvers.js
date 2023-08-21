@@ -1,6 +1,13 @@
 import { GraphQLError } from "graphql";
 import { getCompany } from "./db/companies.js";
-import { getJob, getJobByCompany, getJobs } from "./db/jobs.js";
+import {
+  createJob,
+  deleteJob,
+  getJob,
+  getJobByCompany,
+  getJobs,
+  updateJob,
+} from "./db/jobs.js";
 import { getUsers } from "./db/users.js";
 
 export const resolvers = {
@@ -14,6 +21,18 @@ export const resolvers = {
         throw notFoundMessage("No company with ID" + id);
       }
       return company;
+    },
+  },
+  Mutation: {
+    createJob: (__root, { input: { title, description } }) => {
+      const companyId = "FjcJCHJALA4i";
+      return createJob({ companyId, title, description });
+    },
+    deleteJob: (__root, { input: { id } }) => {
+      return deleteJob(id);
+    },
+    updateJob: (__root, { input: { id, title, description } }) => {
+      return updateJob({ id, title, description });
     },
   },
   Job: {

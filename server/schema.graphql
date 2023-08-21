@@ -5,6 +5,12 @@ type Query {
   company(id: ID!): Company!
 }
 
+type Mutation {
+  createJob(input: CreateJobInput!): Job
+  deleteJob(input: DeleteJobInput!): Job
+  updateJob(input: UpdateJobInput!): Job
+}
+
 """
 Represent for job post
 """
@@ -30,4 +36,21 @@ type Company {
   name: String!
   description: String
   jobs: [Job!]
+}
+
+#input type (client send agrument for server) type normal in schema is output type (server send to client)
+
+input CreateJobInput {
+  title: String!
+  description: String
+}
+
+input DeleteJobInput {
+  id: ID!
+}
+
+input UpdateJobInput {
+  id: ID!
+  title: String!
+  description: String
 }

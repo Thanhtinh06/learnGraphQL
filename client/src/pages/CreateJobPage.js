@@ -1,37 +1,59 @@
-import { useState } from 'react';
+import { useEffect, useState } from "react";
+import { createJob, getJob, updateJob } from "./../lib/graphql/queries";
+import { useNavigate, useParams } from "react-router";
 
 function CreateJobPage() {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-
-  const handleSubmit = (event) => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const navigate = useNavigate();
+  const { jobId } = useParams();
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('should post a new job:', { title, description });
+    if (!jobId) {
+      const job = await createJob({ title, description });
+      if (job) {
+        navigate("/");
+      }
+    } else {
+      const job = await updateJob({ id: jobId, title, description });
+      if (job) {
+        alert("Update Successfull");
+      }
+    }
   };
+  useEffect(() => {
+    if (jobId) {
+      (async () => {
+        const { title, description } = await getJob(jobId);
+        setTitle(title);
+        setDescription(description);
+      })();
+    }
+  }, [jobId]);
 
   return (
     <div>
-      <h1 className="title">
-        New Job
-      </h1>
+      <h1 className="title">New Job</h1>
       <div className="box">
         <form>
           <div className="field">
-            <label className="label">
-              Title
-            </label>
+            <label className="label">Title</label>
             <div className="control">
-              <input className="input" type="text" value={title}
+              <input
+                className="input"
+                type="text"
+                value={title}
                 onChange={(event) => setTitle(event.target.value)}
               />
             </div>
           </div>
           <div className="field">
-            <label className="label">
-              Description
-            </label>
+            <label className="label">Description</label>
             <div className="control">
-              <textarea className="textarea" rows={10} value={description}
+              <textarea
+                className="textarea"
+                rows={10}
+                value={description}
                 onChange={(event) => setDescription(event.target.value)}
               />
             </div>
